@@ -5,7 +5,7 @@ import { RootState } from '../../services/store';
 // import { Role } from '../../types';
 
 export const ProtectedRoute = () => {
-  // const isAuthenticated = false;
+  const isAuthenticated = false;
   //
   // if (!isAuthenticated) {
   //   return <Navigate to='/register' />;
