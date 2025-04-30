@@ -1,13 +1,76 @@
-import { ConstructorPage } from '@pages';
+import {
+  ConstructorPage,
+  Feed,
+  ForgotPassword,
+  Login,
+  NotFound404,
+  Profile,
+  ProfileOrders,
+  Register,
+  ResetPassword
+} from '@pages';
 import '../../index.css';
 import styles from './app.module.css';
 
-import { AppHeader } from '@components';
+import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
+import { Route, Routes } from 'react-router-dom';
+import { ProtectedRoute } from '../protected-route';
 
 const App = () => (
   <div className={styles.app}>
     <AppHeader />
-    <ConstructorPage />
+    <Routes>
+      <Route path='/' element={<ConstructorPage />} />
+      <Route path='/feed' element={<Feed />} />
+      <Route path='/login' element={<ProtectedRoute />}>
+        <Route path='/login' element={<Login />} />
+      </Route>
+      <Route path='/register' element={<ProtectedRoute />}>
+        <Route path='/register' element={<Register />} />
+      </Route>
+      <Route path='/forgot-password' element={<ProtectedRoute />}>
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+      </Route>
+      <Route path='/reset-password' element={<ProtectedRoute />}>
+        <Route path='/reset-password' element={<ResetPassword />} />
+      </Route>
+      <Route path='/profile' element={<ProtectedRoute />}>
+        <Route path='/profile'>
+          <Route index element={<Profile />} />
+          <Route path='orders' element={<ProfileOrders />} />
+        </Route>
+      </Route>
+      <Route path='*' element={<NotFound404 />} />
+    </Routes>
+
+    <Routes>
+      <Route
+        path='/feed/:number'
+        element={
+          <Modal title={'Информация о заказе'} onClose={() => 0}>
+            <OrderInfo />
+          </Modal>
+        }
+      />
+      <Route
+        path='/ingredients/:id'
+        element={
+          <Modal title={'Информация об ингредиентах'} onClose={() => 0}>
+            <IngredientDetails />
+          </Modal>
+        }
+      />
+      <Route path='/profile/orders/:number' element={<ProtectedRoute />}>
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <Modal title={'Информация о заказе'} onClose={() => 0}>
+              <OrderInfo />
+            </Modal>
+          }
+        />
+      </Route>
+    </Routes>
   </div>
 );
 
