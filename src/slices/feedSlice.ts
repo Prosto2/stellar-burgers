@@ -1,6 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TOrder } from '@utils-types';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { TIngredient, TOrder } from '@utils-types';
 import { getFeedsApi } from '@api';
+import { RootState } from '../services/store';
 
 interface TIngredientsList {
   orders: TOrder[];
@@ -19,12 +20,41 @@ export const fetchOrders = createAsyncThunk<TIngredientsList, void>(
   async () => await getFeedsApi()
 );
 
+// export const selectIngredientsByOrderId =
+//   (orderId: string) => (state: RootState) => {
+//     const order = state.feed.orders.find((order) => order._id === orderId);
+//
+//     if (!order) {
+//       throw new Error(`Заказ с id: ${orderId} не найден`);
+//     }
+//
+//     const ingredients = order.ingredients.map((ingredientID) =>
+//       state.burger.ingredients.find(
+//         (ingredient) => ingredient._id === ingredientID
+//       )
+//     );
+//
+//     const validIngredients = ingredients.filter(
+//       (ingredient): ingredient is TIngredient => ingredient !== undefined
+//     );
+//
+//     if (validIngredients.length === 0) {
+//       throw new Error(`Ингредиенты заказа с id: ${orderId} не найдены`);
+//     }
+//
+//     return validIngredients;
+//   };
+
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
   reducers: {},
   selectors: {
-    selectOrders: (sliceState) => sliceState.orders
+    selectOrders: (sliceState) => sliceState.orders,
+    selectTotals: (sliceState) => ({
+      total: sliceState.total,
+      totalToday: sliceState.totalToday
+    })
   },
   extraReducers: (builder) => {
     builder.addCase(fetchOrders.fulfilled, (state, action) => {
@@ -35,7 +65,7 @@ const feedSlice = createSlice({
   }
 });
 
-export const { selectOrders } = feedSlice.selectors;
+export const { selectOrders, selectTotals } = feedSlice.selectors;
 
 export const {} = feedSlice.actions;
 export default feedSlice.reducer;

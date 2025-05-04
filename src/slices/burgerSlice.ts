@@ -84,7 +84,8 @@ const burgerSlice = createSlice({
       sliceState.ingredients.filter((i) => i.type === 'main'),
     selectSauces: (sliceState) =>
       sliceState.ingredients.filter((i) => i.type === 'sauce'),
-    selectConstructorItems: (sliceState) => sliceState.constructorItems
+    selectConstructorItems: (sliceState) => sliceState.constructorItems,
+    selectIngredients: (sliceState) => sliceState.ingredients
   },
   extraReducers: (builder) => {
     builder
@@ -107,7 +108,8 @@ export const {
   selectBuns,
   selectMains,
   selectSauces,
-  selectConstructorItems
+  selectConstructorItems,
+  selectIngredients
 } = burgerSlice.selectors;
 
 export const {
