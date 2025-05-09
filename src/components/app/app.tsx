@@ -15,63 +15,71 @@ import styles from './app.module.css';
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from '../protected-route';
+import { useDispatch } from '../../services/store';
+import { fetchUser } from '../../slices/userSlice';
 
-const App = () => (
-  <div className={styles.app}>
-    <AppHeader />
-    <Routes>
-      <Route path='/' element={<ConstructorPage />} />
-      <Route path='/feed' element={<Feed />} />
-      <Route path='/login' element={<ProtectedRoute />}>
-        <Route path='/login' element={<Login />} />
-      </Route>
-      <Route path='/register' element={<ProtectedRoute />}>
-        <Route path='/register' element={<Register />} />
-      </Route>
-      <Route path='/forgot-password' element={<ProtectedRoute />}>
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-      </Route>
-      <Route path='/reset-password' element={<ProtectedRoute />}>
-        <Route path='/reset-password' element={<ResetPassword />} />
-      </Route>
-      <Route path='/profile' element={<ProtectedRoute />}>
-        <Route path='/profile'>
-          <Route index element={<Profile />} />
-          <Route path='orders' element={<ProfileOrders />} />
+const App = () => {
+  const dispatch = useDispatch();
+
+  dispatch(fetchUser());
+
+  return (
+    <div className={styles.app}>
+      <AppHeader />
+      <Routes>
+        <Route path='/' element={<ConstructorPage />} />
+        <Route path='/feed' element={<Feed />} />
+        <Route path='/login' element={<ProtectedRoute onlyUnAuth />}>
+          <Route path='/login' element={<Login />} />
         </Route>
-      </Route>
-      <Route path='*' element={<NotFound404 />} />
-    </Routes>
+        <Route path='/register' element={<ProtectedRoute onlyUnAuth />}>
+          <Route path='/register' element={<Register />} />
+        </Route>
+        <Route path='/forgot-password' element={<ProtectedRoute onlyUnAuth />}>
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+        </Route>
+        <Route path='/reset-password' element={<ProtectedRoute />}>
+          <Route path='/reset-password' element={<ResetPassword />} />
+        </Route>
+        <Route path='/profile' element={<ProtectedRoute />}>
+          <Route path='/profile'>
+            <Route index element={<Profile />} />
+            <Route path='orders' element={<ProfileOrders />} />
+          </Route>
+        </Route>
+        <Route path='*' element={<NotFound404 />} />
+      </Routes>
 
-    <Routes>
-      <Route
-        path='/feed/:number'
-        element={
-          <Modal title={'Информация о заказе'} onClose={() => 0}>
-            <OrderInfo />
-          </Modal>
-        }
-      />
-      <Route
-        path='/ingredients/:id'
-        element={
-          <Modal title={'Информация об ингредиентах'} onClose={() => 0}>
-            <IngredientDetails />
-          </Modal>
-        }
-      />
-      <Route path='/profile/orders/:number' element={<ProtectedRoute />}>
+      <Routes>
         <Route
-          path='/profile/orders/:number'
+          path='/feed/:number'
           element={
             <Modal title={'Информация о заказе'} onClose={() => 0}>
               <OrderInfo />
             </Modal>
           }
         />
-      </Route>
-    </Routes>
-  </div>
-);
+        <Route
+          path='/ingredients/:id'
+          element={
+            <Modal title={'Информация об ингредиентах'} onClose={() => 0}>
+              <IngredientDetails />
+            </Modal>
+          }
+        />
+        <Route path='/profile/orders/:number' element={<ProtectedRoute />}>
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <Modal title={'Информация о заказе'} onClose={() => 0}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+        </Route>
+      </Routes>
+    </div>
+  );
+};
 
 export default App;

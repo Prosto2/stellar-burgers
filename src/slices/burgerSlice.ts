@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TIngredient } from '@utils-types';
-import { getIngredientsApi } from '@api';
+import { getIngredientsApi, orderBurgerApi } from '@api';
 
 interface TIngredientsList {
   ingredients: TIngredient[];
@@ -23,6 +23,11 @@ const initialState: TIngredientsList = {
 export const fetchIngredients = createAsyncThunk<TIngredient[], void>(
   'burger/fetchIngredients',
   async () => await getIngredientsApi()
+);
+
+export const fetchOrderBurger = createAsyncThunk(
+  'burger/fetchOrderBurger',
+  async (data: string[]) => await orderBurgerApi(data)
 );
 
 const burgerSlice = createSlice({

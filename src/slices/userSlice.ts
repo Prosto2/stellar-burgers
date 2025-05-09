@@ -1,63 +1,147 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
-import { loginUserApi, registerUserApi, TLoginData, TRegisterData } from '@api';
+import {
+  getUserApi,
+  loginUserApi,
+  logoutApi,
+  registerUserApi,
+  TRegisterData,
+  updateUserApi
+} from '@api';
+import { deleteCookie, setCookie } from '../utils/cookie';
 
 interface TAuthResponse {
-  refreshToken: string;
-  accessToken: string;
-  user: TUser;
+  isAuthChecked: boolean;
+  errorText: string;
+  user: TUser | null;
 }
 
 const initialState: TAuthResponse = {
-  refreshToken: '',
-  accessToken: '',
-  user: {
-    email: '',
-    name: ''
-  }
+  isAuthChecked: false,
+  errorText: '',
+  user: null
 };
 
-export const fetchRegister = createAsyncThunk<TAuthResponse, TRegisterData>(
+export const fetchUser = createAsyncThunk('user/fetchUser', async () => {
+  const data = await getUserApi();
+  return data.user;
+});
+
+export const fetchRegister = createAsyncThunk(
   'user/fetchRegister',
-  async (data: TRegisterData) => await registerUserApi(data)
+  async ({ email, name, password }: TRegisterData) => {
+    const data = await registerUserApi({ email, name, password });
+    setCookie('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    return data.user;
+  }
 );
 
-export const fetchLogin = createAsyncThunk<TAuthResponse, TLoginData>(
+export const fetchLogin = createAsyncThunk(
   'user/fetchLogin',
-  async (data: TLoginData) => await loginUserApi(data)
+  async ({ email, password }: Omit<TRegisterData, 'name'>) => {
+    const data = await loginUserApi({ email, password });
+    setCookie('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    return data.user;
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  'user/logoutUser',
+  (_, { dispatch }) => {
+    logoutApi()
+      .then(() => {
+        localStorage.clear(); // очищаем refreshToken
+        deleteCookie('accessToken'); // очищаем accessToken
+        dispatch(userLogout()); // удаляем пользователя из хранилища
+      })
+      .catch(() => {
+        console.log('Ошибка выполнения выхода');
+      });
+  }
+);
+
+export const fetchUpdateUser = createAsyncThunk(
+  'user/fetchUpdateUser',
+  async ({ email, name, password }: TRegisterData) => {
+    const data = await updateUserApi({ email, name, password });
+    return data.user;
+  }
 );
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    authChecked: (state) => {
+      state.isAuthChecked = true;
+    },
+    userLogout: (state) => {
+      state.user = null;
+    }
+  },
   selectors: {
-    selectUser: (sliceState) => sliceState.user
+    selectUser: (sliceState) => sliceState.user,
+    isAuthCheckedSelector: (sliceState) => sliceState.isAuthChecked,
+    selectError: (sliceState) => sliceState.errorText
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchRegister.rejected, (state, action) => {
-        console.log(action.error);
+        state.errorText = action.error.message ? action.error.message : '';
+        console.log(action.error.message);
       })
       .addCase(fetchRegister.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
-        state.refreshToken = action.payload.refreshToken;
+        state.user = action.payload;
+        state.errorText = '';
         console.log(state.user);
       })
       .addCase(fetchLogin.rejected, (state, action) => {
+        state.errorText = action.error.message ? action.error.message : '';
         console.log(action.error);
       })
       .addCase(fetchLogin.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
-        state.refreshToken = action.payload.refreshToken;
+        state.user = action.payload;
+        state.errorText = '';
+        console.log(state.user);
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        console.log(action.error);
+        state.isAuthChecked = true;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthChecked = true;
+        console.log(state.user);
+      })
+      .addCase(fetchUpdateUser.rejected, (state, action) => {
+        state.errorText = action.error.message ? action.error.message : '';
+        console.log(action.error);
+      })
+      .addCase(fetchUpdateUser.fulfilled, (state, action) => {
+        state.errorText = '';
+        state.user = action.payload;
         console.log(state.user);
       });
   }
 });
 
-export const { selectUser } = userSlice.selectors;
+export const checkUserAuth = createAsyncThunk(
+  'user/checkUser',
+  (_, { dispatch }) => {
+    if (0) {
+      dispatch(fetchUser()).finally(() => {
+        dispatch(authChecked());
+      });
+    } else {
+      dispatch(authChecked());
+    }
+  }
+);
 
-export const {} = userSlice.actions;
+export const { selectUser, isAuthCheckedSelector, selectError } =
+  userSlice.selectors;
+
+export const { authChecked, userLogout } = userSlice.actions;
 export default userSlice.reducer;
