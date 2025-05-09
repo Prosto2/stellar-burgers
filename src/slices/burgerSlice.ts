@@ -1,10 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TConstructorIngredient, TIngredient } from '@utils-types';
+import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
 import { getIngredientsApi, orderBurgerApi } from '@api';
 
 interface TIngredientsList {
   ingredients: TIngredient[];
+  ingredientID: string;
   isLoading: boolean;
+  orderRequest: boolean;
+  orderModalData: TOrder | null;
   constructorItems: {
     bun: TIngredient | null;
     ingredients: TConstructorIngredient[];
@@ -13,7 +16,10 @@ interface TIngredientsList {
 
 const initialState: TIngredientsList = {
   ingredients: [],
+  ingredientID: '',
   isLoading: true,
+  orderRequest: false,
+  orderModalData: null,
   constructorItems: {
     bun: null,
     ingredients: []
@@ -34,6 +40,9 @@ const burgerSlice = createSlice({
   name: 'burger',
   initialState,
   reducers: {
+    ingredientID(state, action: PayloadAction<string>) {
+      state.ingredientID = action.payload;
+    },
     addIngredient(state, action: PayloadAction<TIngredient>) {
       if (action.payload.type === 'bun') {
         state.constructorItems.bun = action.payload;
@@ -90,7 +99,13 @@ const burgerSlice = createSlice({
     selectSauces: (sliceState) =>
       sliceState.ingredients.filter((i) => i.type === 'sauce'),
     selectConstructorItems: (sliceState) => sliceState.constructorItems,
-    selectIngredients: (sliceState) => sliceState.ingredients
+    selectIngredients: (sliceState) => sliceState.ingredients,
+    selectOrderRequest: (sliceState) => sliceState.orderRequest,
+    selectOrderModalData: (sliceState) => sliceState.orderModalData,
+    selectIngredientByID: (sliceState) =>
+      sliceState.ingredients.find(
+        (ingredient) => ingredient._id === sliceState.ingredientID
+      )
   },
   extraReducers: (builder) => {
     builder
@@ -104,6 +119,17 @@ const burgerSlice = createSlice({
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.isLoading = false;
         state.ingredients = action.payload;
+      })
+      .addCase(fetchOrderBurger.pending, (state) => {
+        state.orderRequest = true;
+      })
+      .addCase(fetchOrderBurger.rejected, (state, action) => {
+        state.orderRequest = false;
+        console.log('error: ' + action.payload);
+      })
+      .addCase(fetchOrderBurger.fulfilled, (state, action) => {
+        state.orderRequest = false;
+        state.orderModalData = action.payload.order;
       });
   }
 });
@@ -114,10 +140,14 @@ export const {
   selectMains,
   selectSauces,
   selectConstructorItems,
-  selectIngredients
+  selectIngredients,
+  selectOrderRequest,
+  selectOrderModalData,
+  selectIngredientByID
 } = burgerSlice.selectors;
 
 export const {
+  ingredientID,
   addIngredient,
   handleCloseAction,
   handleMoveUpAction,

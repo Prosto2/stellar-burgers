@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TUser } from '@utils-types';
+import { TOrder, TUser } from '@utils-types';
 import {
+  getOrdersApi,
   getUserApi,
   loginUserApi,
   logoutApi,
@@ -14,12 +15,14 @@ interface TAuthResponse {
   isAuthChecked: boolean;
   errorText: string;
   user: TUser | null;
+  orders: TOrder[];
 }
 
 const initialState: TAuthResponse = {
   isAuthChecked: false,
   errorText: '',
-  user: null
+  user: null,
+  orders: []
 };
 
 export const fetchUser = createAsyncThunk('user/fetchUser', async () => {
@@ -70,6 +73,11 @@ export const fetchUpdateUser = createAsyncThunk(
   }
 );
 
+export const fetchOrders = createAsyncThunk(
+  'user/Orders',
+  async () => await getOrdersApi()
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -84,7 +92,8 @@ const userSlice = createSlice({
   selectors: {
     selectUser: (sliceState) => sliceState.user,
     isAuthCheckedSelector: (sliceState) => sliceState.isAuthChecked,
-    selectError: (sliceState) => sliceState.errorText
+    selectError: (sliceState) => sliceState.errorText,
+    selectOrders: (sliceState) => sliceState.orders
   },
   extraReducers: (builder) => {
     builder
@@ -123,6 +132,9 @@ const userSlice = createSlice({
         state.errorText = '';
         state.user = action.payload;
         console.log(state.user);
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.orders = action.payload;
       });
   }
 });
@@ -140,7 +152,7 @@ export const checkUserAuth = createAsyncThunk(
   }
 );
 
-export const { selectUser, isAuthCheckedSelector, selectError } =
+export const { selectUser, isAuthCheckedSelector, selectError, selectOrders } =
   userSlice.selectors;
 
 export const { authChecked, userLogout } = userSlice.actions;
