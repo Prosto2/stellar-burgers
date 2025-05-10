@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
+import { TConstructorItems, TIngredient, TOrder } from '@utils-types';
 import { getIngredientsApi, orderBurgerApi } from '@api';
 
 interface TIngredientsList {
@@ -8,10 +8,7 @@ interface TIngredientsList {
   isLoading: boolean;
   orderRequest: boolean;
   orderModalData: TOrder | null;
-  constructorItems: {
-    bun: TIngredient | null;
-    ingredients: TConstructorIngredient[];
-  };
+  constructorItems: TConstructorItems;
 }
 
 const initialState: TIngredientsList = {
@@ -118,7 +115,6 @@ const burgerSlice = createSlice({
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.isLoading = false;
-        console.log('error: ' + action.payload);
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -129,11 +125,14 @@ const burgerSlice = createSlice({
       })
       .addCase(fetchOrderBurger.rejected, (state, action) => {
         state.orderRequest = false;
-        console.log('error: ' + action.payload);
       })
       .addCase(fetchOrderBurger.fulfilled, (state, action) => {
         state.orderRequest = false;
         state.orderModalData = action.payload.order;
+        state.constructorItems = {
+          bun: null,
+          ingredients: []
+        };
       });
   }
 });

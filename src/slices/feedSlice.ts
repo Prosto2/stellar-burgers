@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TIngredient, TOrder } from '@utils-types';
+import { TOrder } from '@utils-types';
 import { getFeedsApi, getOrderByNumberApi } from '@api';
 
 interface TIngredientsList {
@@ -47,7 +47,6 @@ const feedSlice = createSlice({
       })
       .addCase(fetchGetOrderByNumber.fulfilled, (state, action) => {
         state.orderData = action.payload.orders[0];
-        console.log(action.payload);
       });
   }
 });

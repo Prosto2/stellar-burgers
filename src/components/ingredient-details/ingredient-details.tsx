@@ -5,10 +5,8 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import { selectIngredientByID, ingredientID } from '../../slices/burgerSlice';
 import { TIngredient } from '@utils-types';
-import { fetchUser } from '../../slices/userSlice';
 
 export const IngredientDetails: FC = () => {
-  /** TODO: взять переменную из стора */
   const params = useParams();
   const dispatch = useDispatch();
 

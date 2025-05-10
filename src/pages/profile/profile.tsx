@@ -10,7 +10,6 @@ import {
 import { TUser } from '@utils-types';
 
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
   const user = useSelector<TUser | null>(selectUser) ?? { name: '', email: '' };
 
   const dispatch = useDispatch();

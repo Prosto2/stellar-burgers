@@ -55,9 +55,9 @@ export const logoutUser = createAsyncThunk(
   (_, { dispatch }) => {
     logoutApi()
       .then(() => {
-        localStorage.clear(); // очищаем refreshToken
-        deleteCookie('accessToken'); // очищаем accessToken
-        dispatch(userLogout()); // удаляем пользователя из хранилища
+        localStorage.clear();
+        deleteCookie('accessToken');
+        dispatch(userLogout());
       })
       .catch(() => {
         console.log('Ошибка выполнения выхода');
@@ -82,15 +82,13 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    authChecked: (state) => {
-      state.isAuthChecked = true;
-    },
     userLogout: (state) => {
       state.user = null;
     }
   },
   selectors: {
     selectUser: (sliceState) => sliceState.user,
+    selectUserName: (sliceState) => sliceState.user?.name,
     isAuthCheckedSelector: (sliceState) => sliceState.isAuthChecked,
     selectError: (sliceState) => sliceState.errorText,
     selectOrders: (sliceState) => sliceState.orders
@@ -99,39 +97,31 @@ const userSlice = createSlice({
     builder
       .addCase(fetchRegister.rejected, (state, action) => {
         state.errorText = action.error.message ? action.error.message : '';
-        console.log(action.error.message);
       })
       .addCase(fetchRegister.fulfilled, (state, action) => {
         state.user = action.payload;
         state.errorText = '';
-        console.log(state.user);
       })
       .addCase(fetchLogin.rejected, (state, action) => {
         state.errorText = action.error.message ? action.error.message : '';
-        console.log(action.error);
       })
       .addCase(fetchLogin.fulfilled, (state, action) => {
         state.user = action.payload;
         state.errorText = '';
-        console.log(state.user);
       })
       .addCase(fetchUser.rejected, (state, action) => {
-        console.log(action.error);
         state.isAuthChecked = true;
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthChecked = true;
-        console.log(state.user);
       })
       .addCase(fetchUpdateUser.rejected, (state, action) => {
         state.errorText = action.error.message ? action.error.message : '';
-        console.log(action.error);
       })
       .addCase(fetchUpdateUser.fulfilled, (state, action) => {
         state.errorText = '';
         state.user = action.payload;
-        console.log(state.user);
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.orders = action.payload;
@@ -139,21 +129,13 @@ const userSlice = createSlice({
   }
 });
 
-export const checkUserAuth = createAsyncThunk(
-  'user/checkUser',
-  (_, { dispatch }) => {
-    if (0) {
-      dispatch(fetchUser()).finally(() => {
-        dispatch(authChecked());
-      });
-    } else {
-      dispatch(authChecked());
-    }
-  }
-);
+export const {
+  selectUser,
+  isAuthCheckedSelector,
+  selectError,
+  selectOrders,
+  selectUserName
+} = userSlice.selectors;
 
-export const { selectUser, isAuthCheckedSelector, selectError, selectOrders } =
-  userSlice.selectors;
-
-export const { authChecked, userLogout } = userSlice.actions;
+export const { userLogout } = userSlice.actions;
 export default userSlice.reducer;

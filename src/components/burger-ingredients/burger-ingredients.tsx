@@ -11,7 +11,6 @@ import {
 } from '../../slices/burgerSlice';
 
 export const BurgerIngredients: FC = () => {
-  /** TODO: взять переменные из стора */
   const buns = useSelector<TIngredient[]>(selectBuns);
   const mains = useSelector<TIngredient[]>(selectMains);
   const sauces = useSelector<TIngredient[]>(selectSauces);
