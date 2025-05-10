@@ -88,6 +88,10 @@ const burgerSlice = createSlice({
         state.constructorItems.ingredients.filter(
           (i) => i.id !== action.payload
         );
+    },
+    removeOrderModalDataAction(state) {
+      state.orderRequest = false;
+      state.orderModalData = null;
     }
   },
   selectors: {
@@ -151,6 +155,7 @@ export const {
   addIngredient,
   handleCloseAction,
   handleMoveUpAction,
-  handleMoveDownAction
+  handleMoveDownAction,
+  removeOrderModalDataAction
 } = burgerSlice.actions;
 export default burgerSlice.reducer;

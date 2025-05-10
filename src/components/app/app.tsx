@@ -17,12 +17,17 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../protected-route';
 import { useDispatch } from '../../services/store';
 import { fetchUser } from '../../slices/userSlice';
+import { fetchIngredients } from '../../slices/burgerSlice';
+import { useEffect } from 'react';
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  dispatch(fetchUser());
+  useEffect(() => {
+    dispatch(fetchUser());
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
   const location = useLocation();
 
@@ -45,7 +50,7 @@ const App = () => {
         <Route path='/forgot-password' element={<ProtectedRoute onlyUnAuth />}>
           <Route path='/forgot-password' element={<ForgotPassword />} />
         </Route>
-        <Route path='/reset-password' element={<ProtectedRoute />}>
+        <Route path='/reset-password' element={<ProtectedRoute onlyUnAuth />}>
           <Route path='/reset-password' element={<ResetPassword />} />
         </Route>
         <Route path='/profile' element={<ProtectedRoute />}>

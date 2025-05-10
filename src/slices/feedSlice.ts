@@ -1,49 +1,30 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TIngredient, TOrder } from '@utils-types';
-import { getFeedsApi } from '@api';
-import { RootState } from '../services/store';
+import { getFeedsApi, getOrderByNumberApi } from '@api';
 
 interface TIngredientsList {
   orders: TOrder[];
+  orderData: TOrder | null;
   total: number;
   totalToday: number;
 }
 
 const initialState: TIngredientsList = {
   orders: [],
+  orderData: null,
   total: 0,
   totalToday: 0
 };
 
-export const fetchOrders = createAsyncThunk<TIngredientsList, void>(
+export const fetchOrders = createAsyncThunk(
   'feed/fetchOrders',
   async () => await getFeedsApi()
 );
 
-// export const selectIngredientsByOrderId =
-//   (orderId: string) => (state: RootState) => {
-//     const order = state.feed.orders.find((order) => order._id === orderId);
-//
-//     if (!order) {
-//       throw new Error(`Заказ с id: ${orderId} не найден`);
-//     }
-//
-//     const ingredients = order.ingredients.map((ingredientID) =>
-//       state.burger.ingredients.find(
-//         (ingredient) => ingredient._id === ingredientID
-//       )
-//     );
-//
-//     const validIngredients = ingredients.filter(
-//       (ingredient): ingredient is TIngredient => ingredient !== undefined
-//     );
-//
-//     if (validIngredients.length === 0) {
-//       throw new Error(`Ингредиенты заказа с id: ${orderId} не найдены`);
-//     }
-//
-//     return validIngredients;
-//   };
+export const fetchGetOrderByNumber = createAsyncThunk(
+  'feed/fetchGetOrderByNumber',
+  async (number: number) => await getOrderByNumberApi(number)
+);
 
 const feedSlice = createSlice({
   name: 'feed',
@@ -54,18 +35,25 @@ const feedSlice = createSlice({
     selectTotals: (sliceState) => ({
       total: sliceState.total,
       totalToday: sliceState.totalToday
-    })
+    }),
+    selectOrderData: (sliceState) => sliceState.orderData
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchOrders.fulfilled, (state, action) => {
-      state.orders = action.payload.orders;
-      state.total = action.payload.total;
-      state.totalToday = action.payload.totalToday;
-    });
+    builder
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.orders = action.payload.orders;
+        state.total = action.payload.total;
+        state.totalToday = action.payload.totalToday;
+      })
+      .addCase(fetchGetOrderByNumber.fulfilled, (state, action) => {
+        state.orderData = action.payload.orders[0];
+        console.log(action.payload);
+      });
   }
 });
 
-export const { selectOrders, selectTotals } = feedSlice.selectors;
+export const { selectOrders, selectTotals, selectOrderData } =
+  feedSlice.selectors;
 
 export const {} = feedSlice.actions;
 export default feedSlice.reducer;

@@ -10,13 +10,7 @@ import { fetchIngredients, selectIsLoading } from '../../slices/burgerSlice';
 
 export const ConstructorPage: FC = () => {
   /** TODO: взять переменную из стора */
-  const dispatch = useDispatch();
-
   const isIngredientsLoading = useSelector<boolean>(selectIsLoading);
-
-  useEffect(() => {
-    dispatch(fetchIngredients());
-  }, [dispatch]);
 
   return (
     <>

@@ -4,6 +4,7 @@ import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   fetchOrderBurger,
+  removeOrderModalDataAction,
   selectConstructorItems,
   selectOrderModalData,
   selectOrderRequest
@@ -23,7 +24,9 @@ export const BurgerConstructor: FC = () => {
 
     dispatch(fetchOrderBurger(constructorItems.ingredients.map((i) => i._id)));
   };
-  const closeOrderModal = () => {};
+  const closeOrderModal = () => {
+    dispatch(removeOrderModalDataAction());
+  };
 
   const price = useMemo(
     () =>
