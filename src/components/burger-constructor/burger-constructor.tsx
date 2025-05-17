@@ -6,15 +6,16 @@ import {
 } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
+
+import { useNavigate } from 'react-router-dom';
 import {
-  fetchOrderBurger,
+  OrderBurger,
   removeOrderModalDataAction,
   selectConstructorItems,
   selectOrderModalData,
   selectOrderRequest
-} from '../../slices/burgerSlice';
-import { selectUser } from '../../slices/userSlice';
-import { useNavigate } from 'react-router-dom';
+} from '../../services/slices/burgerSlice/burgerSlice';
+import { selectUser } from '../../services/slices/userSlice/userSlice';
 
 export const BurgerConstructor: FC = () => {
   const constructorItems = useSelector<TConstructorItems>(
@@ -37,7 +38,7 @@ export const BurgerConstructor: FC = () => {
       ...constructorItems.ingredients.map((i) => i._id),
       ...(constructorItems.bun ? [constructorItems.bun._id] : [])
     ];
-    dispatch(fetchOrderBurger(allIngredientIds));
+    dispatch(OrderBurger(allIngredientIds));
   };
   const closeOrderModal = () => {
     dispatch(removeOrderModalDataAction());

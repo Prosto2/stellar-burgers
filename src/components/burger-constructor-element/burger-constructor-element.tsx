@@ -6,7 +6,7 @@ import {
   handleCloseAction,
   handleMoveDownAction,
   handleMoveUpAction
-} from '../../slices/burgerSlice';
+} from '../../services/slices/burgerSlice/burgerSlice';
 
 export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
   ({ ingredient, index, totalItems }) => {

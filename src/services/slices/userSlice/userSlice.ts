@@ -9,7 +9,7 @@ import {
   TRegisterData,
   updateUserApi
 } from '@api';
-import { deleteCookie, setCookie } from '../utils/cookie';
+import { deleteCookie, setCookie } from '../../../utils/cookie';
 
 interface TAuthResponse {
   isAuthChecked: boolean;
@@ -25,12 +25,12 @@ const initialState: TAuthResponse = {
   orders: []
 };
 
-export const fetchUser = createAsyncThunk('user/fetchUser', async () => {
+export const getUser = createAsyncThunk('user/fetchUser', async () => {
   const data = await getUserApi();
   return data.user;
 });
 
-export const fetchRegister = createAsyncThunk(
+export const registerUser = createAsyncThunk(
   'user/fetchRegister',
   async ({ email, name, password }: TRegisterData) => {
     const data = await registerUserApi({ email, name, password });
@@ -40,7 +40,7 @@ export const fetchRegister = createAsyncThunk(
   }
 );
 
-export const fetchLogin = createAsyncThunk(
+export const loginUser = createAsyncThunk(
   'user/fetchLogin',
   async ({ email, password }: Omit<TRegisterData, 'name'>) => {
     const data = await loginUserApi({ email, password });
@@ -65,7 +65,7 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-export const fetchUpdateUser = createAsyncThunk(
+export const UpdateUser = createAsyncThunk(
   'user/fetchUpdateUser',
   async ({ email, name, password }: TRegisterData) => {
     const data = await updateUserApi({ email, name, password });
@@ -73,7 +73,7 @@ export const fetchUpdateUser = createAsyncThunk(
   }
 );
 
-export const fetchOrders = createAsyncThunk(
+export const getOrders = createAsyncThunk(
   'user/Orders',
   async () => await getOrdersApi()
 );
@@ -95,36 +95,42 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchRegister.rejected, (state, action) => {
-        state.errorText = action.error.message ? action.error.message : '';
+      .addCase(registerUser.rejected, (state, action) => {
+        state.errorText = action.error.message || '';
       })
-      .addCase(fetchRegister.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.errorText = '';
       })
-      .addCase(fetchLogin.rejected, (state, action) => {
-        state.errorText = action.error.message ? action.error.message : '';
+      .addCase(loginUser.rejected, (state, action) => {
+        state.errorText = action.error.message || '';
       })
-      .addCase(fetchLogin.fulfilled, (state, action) => {
+      .addCase(loginUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.errorText = '';
       })
-      .addCase(fetchUser.rejected, (state, action) => {
+      .addCase(getUser.rejected, (state, action) => {
         state.isAuthChecked = true;
       })
-      .addCase(fetchUser.fulfilled, (state, action) => {
+      .addCase(getUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthChecked = true;
       })
-      .addCase(fetchUpdateUser.rejected, (state, action) => {
-        state.errorText = action.error.message ? action.error.message : '';
+      .addCase(UpdateUser.rejected, (state, action) => {
+        state.errorText = action.error.message || '';
       })
-      .addCase(fetchUpdateUser.fulfilled, (state, action) => {
+      .addCase(UpdateUser.fulfilled, (state, action) => {
         state.errorText = '';
         state.user = action.payload;
       })
-      .addCase(fetchOrders.fulfilled, (state, action) => {
+      .addCase(getOrders.rejected, (state, action) => {
+        state.errorText = action.error.message || '';
+      })
+      .addCase(getOrders.fulfilled, (state, action) => {
         state.orders = action.payload;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.errorText = action.error.message || '';
       });
   }
 });

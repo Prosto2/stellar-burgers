@@ -9,6 +9,7 @@ interface TIngredientsList {
   orderRequest: boolean;
   orderModalData: TOrder | null;
   constructorItems: TConstructorItems;
+  errorText: string;
 }
 
 const initialState: TIngredientsList = {
@@ -20,15 +21,16 @@ const initialState: TIngredientsList = {
   constructorItems: {
     bun: null,
     ingredients: []
-  }
+  },
+  errorText: ''
 };
 
-export const fetchIngredients = createAsyncThunk<TIngredient[], void>(
+export const getIngredients = createAsyncThunk<TIngredient[], void>(
   'burger/fetchIngredients',
   async () => await getIngredientsApi()
 );
 
-export const fetchOrderBurger = createAsyncThunk(
+export const OrderBurger = createAsyncThunk(
   'burger/fetchOrderBurger',
   async (data: string[]) => await orderBurgerApi(data)
 );
@@ -110,23 +112,25 @@ const burgerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchIngredients.pending, (state) => {
+      .addCase(getIngredients.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(fetchIngredients.rejected, (state, action) => {
+      .addCase(getIngredients.rejected, (state, action) => {
         state.isLoading = false;
+        state.errorText = action.error.message || '';
       })
-      .addCase(fetchIngredients.fulfilled, (state, action) => {
+      .addCase(getIngredients.fulfilled, (state, action) => {
         state.isLoading = false;
         state.ingredients = action.payload;
       })
-      .addCase(fetchOrderBurger.pending, (state) => {
+      .addCase(OrderBurger.pending, (state) => {
         state.orderRequest = true;
       })
-      .addCase(fetchOrderBurger.rejected, (state, action) => {
+      .addCase(OrderBurger.rejected, (state, action) => {
         state.orderRequest = false;
+        state.errorText = action.error.message || '';
       })
-      .addCase(fetchOrderBurger.fulfilled, (state, action) => {
+      .addCase(OrderBurger.fulfilled, (state, action) => {
         state.orderRequest = false;
         state.orderModalData = action.payload.order;
         state.constructorItems = {

@@ -1,7 +1,10 @@
 import { FC, SyntheticEvent, useState } from 'react';
 import { RegisterUI } from '@ui-pages';
 import { useDispatch, useSelector } from '../../services/store';
-import { fetchRegister, selectError } from '../../slices/userSlice';
+import {
+  registerUser,
+  selectError
+} from '../../services/slices/userSlice/userSlice';
 
 export const Register: FC = () => {
   const [userName, setUserName] = useState('');
@@ -13,7 +16,7 @@ export const Register: FC = () => {
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
 
-    dispatch(fetchRegister({ email, name: userName, password }));
+    dispatch(registerUser({ email, name: userName, password }));
   };
 
   return (

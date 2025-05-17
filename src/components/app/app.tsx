@@ -16,18 +16,21 @@ import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../protected-route';
 import { useDispatch, useSelector } from '../../services/store';
-import { fetchUser, isAuthCheckedSelector } from '../../slices/userSlice';
-import { fetchIngredients } from '../../slices/burgerSlice';
 import { useEffect } from 'react';
 import { Preloader } from '@ui';
+import { getIngredients } from '../../services/slices/burgerSlice/burgerSlice';
+import {
+  getUser,
+  isAuthCheckedSelector
+} from '../../services/slices/userSlice/userSlice';
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchUser());
-    dispatch(fetchIngredients());
+    dispatch(getUser());
+    dispatch(getIngredients());
   }, [dispatch]);
 
   const location = useLocation();

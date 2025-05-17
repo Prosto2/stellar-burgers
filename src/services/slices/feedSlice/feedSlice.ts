@@ -7,21 +7,23 @@ interface TIngredientsList {
   orderData: TOrder | null;
   total: number;
   totalToday: number;
+  errorText: string;
 }
 
 const initialState: TIngredientsList = {
   orders: [],
   orderData: null,
   total: 0,
-  totalToday: 0
+  totalToday: 0,
+  errorText: ''
 };
 
-export const fetchOrders = createAsyncThunk(
+export const getFeeds = createAsyncThunk(
   'feed/fetchOrders',
   async () => await getFeedsApi()
 );
 
-export const fetchGetOrderByNumber = createAsyncThunk(
+export const GetOrderByNumber = createAsyncThunk(
   'feed/fetchGetOrderByNumber',
   async (number: number) => await getOrderByNumberApi(number)
 );
@@ -40,12 +42,18 @@ const feedSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchOrders.fulfilled, (state, action) => {
+      .addCase(getFeeds.rejected, (state, action) => {
+        state.errorText = action.error.message || '';
+      })
+      .addCase(getFeeds.fulfilled, (state, action) => {
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
       })
-      .addCase(fetchGetOrderByNumber.fulfilled, (state, action) => {
+      .addCase(GetOrderByNumber.rejected, (state, action) => {
+        state.errorText = action.error.message || '';
+      })
+      .addCase(GetOrderByNumber.fulfilled, (state, action) => {
         state.orderData = action.payload.orders[0];
       });
   }
