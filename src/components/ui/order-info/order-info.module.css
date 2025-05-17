@@ -1,5 +1,5 @@
 .wrap {
-  margin: 0 auto;
+  margin: var(--wrap-margin-top) auto;
   width: 640px;
 }
 .number {
