@@ -36,7 +36,6 @@ const App = () => {
   const location = useLocation();
   const backgroundLocation = location.state?.background;
   const isAuthChecked = useSelector(isAuthCheckedSelector);
-  console.log(isAuthChecked);
 
   return (
     <div className={styles.app}>

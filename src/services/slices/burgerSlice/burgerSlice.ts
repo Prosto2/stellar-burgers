@@ -27,7 +27,11 @@ const initialState: TIngredientsList = {
 
 export const getIngredients = createAsyncThunk<TIngredient[], void>(
   'burger/fetchIngredients',
-  async () => await getIngredientsApi()
+  async () => {
+    const response = await getIngredientsApi();
+    console.log('Данные из запроса:', response);
+    return response;
+  }
 );
 
 export const OrderBurger = createAsyncThunk(
