@@ -3,10 +3,23 @@
  * https://jestjs.io/docs/configuration
  */
 
-import type {Config} from 'jest';
+import type { JestConfigWithTsJest } from 'ts-jest';
 
-const config: Config = {
-  preset: 'ts-jest',
+const config: JestConfigWithTsJest = {
+  moduleNameMapper: {
+    '^@api$$': '<rootDir>/src/utils/burger-api/$1'
+  },
+  // множество разных настроек
+  transform: {
+    // '^.+\\.[tj]sx?$' для обработки файлов js/ts с помощью `ts-jest`
+    // '^.+\\.m?[tj]sx?$' для обработки файлов js/ts/mjs/mts с помощью `ts-jest`
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        // настройки для ts-jest
+      }
+    ]
+  },
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -29,9 +42,13 @@ const config: Config = {
   coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "\\\\node_modules\\\\"
-  // ],
+  coveragePathIgnorePatterns: [
+    '\\\\node_modules\\\\',
+    '<rootDir>/src/utils/*',
+    '<rootDir>/src/services/slices/burgerSlice/actions.ts',
+    '<rootDir>/src/services/slices/feedSlice/actions.ts',
+    '<rootDir>/src/services/slices/userSlice/actions.ts'
+  ],
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: "v8",

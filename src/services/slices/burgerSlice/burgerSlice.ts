@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TConstructorItems, TIngredient, TOrder } from '@utils-types';
-import { getIngredientsApi, orderBurgerApi } from '@api';
+import { getIngredients, OrderBurger } from './actions';
 
 interface TIngredientsList {
   ingredients: TIngredient[];
@@ -25,20 +25,6 @@ const initialState: TIngredientsList = {
   errorText: ''
 };
 
-export const getIngredients = createAsyncThunk<TIngredient[], void>(
-  'burger/fetchIngredients',
-  async () => {
-    const response = await getIngredientsApi();
-    console.log('Данные из запроса:', response);
-    return response;
-  }
-);
-
-export const OrderBurger = createAsyncThunk(
-  'burger/fetchOrderBurger',
-  async (data: string[]) => await orderBurgerApi(data)
-);
-
 const burgerSlice = createSlice({
   name: 'burger',
   initialState,
@@ -56,7 +42,7 @@ const burgerSlice = createSlice({
         });
       }
     },
-    handleMoveDownAction(state, action: PayloadAction<string>) {
+    moveIngredientDown(state, action: PayloadAction<string>) {
       const index = state.constructorItems.ingredients.findIndex(
         (i) => i.id === action.payload
       );
@@ -71,7 +57,7 @@ const burgerSlice = createSlice({
         );
       }
     },
-    handleMoveUpAction(state, action: PayloadAction<string>) {
+    moveIngredientUp(state, action: PayloadAction<string>) {
       const index = state.constructorItems.ingredients.findIndex(
         (i) => i.id === action.payload
       );
@@ -86,13 +72,13 @@ const burgerSlice = createSlice({
         );
       }
     },
-    handleCloseAction(state, action: PayloadAction<string>) {
+    removeIngredient(state, action: PayloadAction<string>) {
       state.constructorItems.ingredients =
         state.constructorItems.ingredients.filter(
           (i) => i.id !== action.payload
         );
     },
-    removeOrderModalDataAction(state) {
+    clearOrderModalData(state) {
       state.orderRequest = false;
       state.orderModalData = null;
     }
@@ -160,9 +146,9 @@ export const {
 export const {
   ingredientID,
   addIngredient,
-  handleCloseAction,
-  handleMoveUpAction,
-  handleMoveDownAction,
-  removeOrderModalDataAction
+  removeIngredient,
+  moveIngredientUp,
+  moveIngredientDown,
+  clearOrderModalData
 } = burgerSlice.actions;
 export default burgerSlice.reducer;

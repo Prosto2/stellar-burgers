@@ -1,0 +1,22 @@
+{
+  "mockOrders": [
+    {
+      "_id": "order1",
+      "status": "done",
+      "name": "Order 1",
+      "createdAt": "2023-01-01T00:00:00Z",
+      "updatedAt": "2023-01-01T01:00:00Z",
+      "number": 1,
+      "ingredients": ["id1", "id2"]
+    },
+    {
+      "_id": "order2",
+      "status": "pending",
+      "name": "Order 2",
+      "createdAt": "2023-01-02T00:00:00Z",
+      "updatedAt": "2023-01-02T01:00:00Z",
+      "number": 2,
+      "ingredients": ["id3", "id4"]
+    }
+  ]
+}

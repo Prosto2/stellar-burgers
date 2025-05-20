@@ -45,7 +45,7 @@ describe('Интеграционные тесты Burger Constructor', () => {
     cy.get('[data-testid="modal-overlay"]').click({ force: true }); // Закрытие модального окна по клику на overlay
     cy.get('[data-testid="modal-Детали ингредиента"]').should('not.exist');
   });
-  it('should create an order and display order number', () => {
+  it('создание и отображение номера заказа', () => {
     cy.contains(ingredients.data[1].name)
       .parent()
       .within(() => {
