@@ -1,33 +1,12 @@
-/**
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/configuration
- */
-
-import type { JestConfigWithTsJest } from 'ts-jest';
+import { pathsToModuleNameMapper, JestConfigWithTsJest } from 'ts-jest';
+import { compilerOptions } from './tsconfig.json';
 
 const config: JestConfigWithTsJest = {
-  moduleNameMapper: {
-    '^@api$$': '<rootDir>/src/utils/burger-api/$1'
-  },
-  // множество разных настроек
-  transform: {
-    // '^.+\\.[tj]sx?$' для обработки файлов js/ts с помощью `ts-jest`
-    // '^.+\\.m?[tj]sx?$' для обработки файлов js/ts/mjs/mts с помощью `ts-jest`
-    '^.+\\.tsx?$': [
-      'ts-jest',
-      {
-        // настройки для ts-jest
-      }
-    ]
-  },
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
   // Stop running tests after `n` failures
   // bail: 0,
-
-  // The directory where Jest should store its cached dependency information
-  // cacheDirectory: "C:\\Users\\User\\AppData\\Local\\Temp\\jest",
 
   // Automatically clear mock calls, instances, contexts and results before every test
   // clearMocks: false,
@@ -36,33 +15,27 @@ const config: JestConfigWithTsJest = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
-
-  // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
-
-  // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: [
-    '\\\\node_modules\\\\',
-    '<rootDir>/src/utils/*',
-    '<rootDir>/src/services/slices/burgerSlice/actions.ts',
-    '<rootDir>/src/services/slices/feedSlice/actions.ts',
-    '<rootDir>/src/services/slices/userSlice/actions.ts'
+  // collectCoverageFrom: ['**/__tests__/?(*.)+(spec|test).[jt]s?(x)'],
+  collectCoverageFrom: [
+    '<rootDir>/src/services/slices/burgerSlice/burgerSlice.ts',
+    '<rootDir>/src/services/slices/feedSlice/feedSlice.ts',
+    '<rootDir>/src/services/slices/userSlice/userSlice.ts'
   ],
 
+  // The directory where Jest should output its coverage files
+  coverageDirectory: 'coverage',
+
+  // An array of regexp pattern strings used to skip coverage collection
+  coveragePathIgnorePatterns: ['\\\\node_modules\\\\'],
+
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "v8",
+  coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
+  coverageReporters: ['json', 'text', 'lcov', 'clover'],
 
   // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: undefined,
+  coverageThreshold: undefined,
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,
@@ -107,9 +80,6 @@ const config: JestConfigWithTsJest = {
   //   "node"
   // ],
 
-  // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
-
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
 
@@ -120,7 +90,9 @@ const config: JestConfigWithTsJest = {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  // preset: undefined,
+  preset: 'ts-jest',
+  moduleDirectories: ['node_modules', '<rootDir>'],
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 
   // Run tests from one or more projects
   // projects: undefined,
@@ -141,12 +113,10 @@ const config: JestConfigWithTsJest = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  // rootDir: undefined,
+  // rootDir: 'src',
 
   // A list of paths to directories that Jest should use to search for files in
-  // roots: [
-  //   "<rootDir>"
-  // ],
+  // roots: ['<rootDir>'],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
@@ -173,10 +143,7 @@ const config: JestConfigWithTsJest = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  // testMatch: [
-  //   "**/__tests__/**/*.[jt]s?(x)",
-  //   "**/?(*.)+(spec|test).[tj]s?(x)"
-  // ],
+  testMatch: ['**/__tests__/?(*.)+(spec|test).[jt]s?(x)'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
@@ -193,7 +160,11 @@ const config: JestConfigWithTsJest = {
   // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  // transform: undefined,
+  transform: {
+    // '^.+\\.[tj]sx?$' для обработки файлов js/ts с помощью `ts-jest`
+    // '^.+\\.m?[tj]sx?$' для обработки файлов js/ts/mjs/mts с помощью `ts-jest`
+    '^.+\\.tsx?$': ['ts-jest', {}]
+  }
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [

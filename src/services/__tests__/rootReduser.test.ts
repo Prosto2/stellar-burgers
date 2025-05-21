@@ -1,7 +1,7 @@
-import { reducers } from './store';
-import { initialState as burgerInitialState } from './slices/burgerSlice/burgerSlice';
-import { initialState as feedInitialState } from './slices/feedSlice/feedSlice';
-import { initialState as userInitialState } from './slices/userSlice/userSlice';
+import { reducers } from '../store';
+import { initialState as burgerInitialState } from '../slices/burgerSlice/burgerSlice';
+import { initialState as feedInitialState } from '../slices/feedSlice/feedSlice';
+import { initialState as userInitialState } from '../slices/userSlice/userSlice';
 
 describe('Тестирование rootReducer', () => {
   it('должен возвращать исходное состояние при вызове с неопределенным состоянием и неизвестным действием', () => {
