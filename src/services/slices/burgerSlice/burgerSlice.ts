@@ -1,6 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TConstructorItems, TIngredient, TOrder } from '@utils-types';
-import { getIngredientsApi, orderBurgerApi } from '@api';
+import { getIngredients, OrderBurger } from './actions';
+import { RootState } from '../../store';
 
 interface TIngredientsList {
   ingredients: TIngredient[];
@@ -12,7 +13,7 @@ interface TIngredientsList {
   errorText: string;
 }
 
-const initialState: TIngredientsList = {
+export const initialState: TIngredientsList = {
   ingredients: [],
   ingredientID: '',
   isLoading: true,
@@ -25,14 +26,23 @@ const initialState: TIngredientsList = {
   errorText: ''
 };
 
-export const getIngredients = createAsyncThunk<TIngredient[], void>(
-  'burger/fetchIngredients',
-  async () => await getIngredientsApi()
+const selectBurgerSlice = (state: RootState) => state.burger;
+
+const selectIngredients = createSelector(
+  selectBurgerSlice,
+  (burger) => burger.ingredients
 );
 
-export const OrderBurger = createAsyncThunk(
-  'burger/fetchOrderBurger',
-  async (data: string[]) => await orderBurgerApi(data)
+export const selectBuns = createSelector(selectIngredients, (ingredients) =>
+  ingredients.filter((i) => i.type === 'bun')
+);
+
+export const selectMains = createSelector(selectIngredients, (ingredients) =>
+  ingredients.filter((i) => i.type === 'main')
+);
+
+export const selectSauces = createSelector(selectIngredients, (ingredients) =>
+  ingredients.filter((i) => i.type === 'sauce')
 );
 
 const burgerSlice = createSlice({
@@ -52,7 +62,7 @@ const burgerSlice = createSlice({
         });
       }
     },
-    handleMoveDownAction(state, action: PayloadAction<string>) {
+    moveIngredientDown(state, action: PayloadAction<string>) {
       const index = state.constructorItems.ingredients.findIndex(
         (i) => i.id === action.payload
       );
@@ -67,7 +77,7 @@ const burgerSlice = createSlice({
         );
       }
     },
-    handleMoveUpAction(state, action: PayloadAction<string>) {
+    moveIngredientUp(state, action: PayloadAction<string>) {
       const index = state.constructorItems.ingredients.findIndex(
         (i) => i.id === action.payload
       );
@@ -82,27 +92,21 @@ const burgerSlice = createSlice({
         );
       }
     },
-    handleCloseAction(state, action: PayloadAction<string>) {
+    removeIngredient(state, action: PayloadAction<string>) {
       state.constructorItems.ingredients =
         state.constructorItems.ingredients.filter(
           (i) => i.id !== action.payload
         );
     },
-    removeOrderModalDataAction(state) {
+    clearOrderModalData(state) {
       state.orderRequest = false;
       state.orderModalData = null;
     }
   },
   selectors: {
     selectIsLoading: (sliceState) => sliceState.isLoading,
-    selectBuns: (sliceState) =>
-      sliceState.ingredients.filter((i) => i.type === 'bun'),
-    selectMains: (sliceState) =>
-      sliceState.ingredients.filter((i) => i.type === 'main'),
-    selectSauces: (sliceState) =>
-      sliceState.ingredients.filter((i) => i.type === 'sauce'),
     selectConstructorItems: (sliceState) => sliceState.constructorItems,
-    selectIngredients: (sliceState) => sliceState.ingredients,
+    selectAllIngredients: (sliceState) => sliceState.ingredients,
     selectOrderRequest: (sliceState) => sliceState.orderRequest,
     selectOrderModalData: (sliceState) => sliceState.orderModalData,
     selectIngredientByID: (sliceState) =>
@@ -143,11 +147,8 @@ const burgerSlice = createSlice({
 
 export const {
   selectIsLoading,
-  selectBuns,
-  selectMains,
-  selectSauces,
   selectConstructorItems,
-  selectIngredients,
+  selectAllIngredients,
   selectOrderRequest,
   selectOrderModalData,
   selectIngredientByID
@@ -156,9 +157,9 @@ export const {
 export const {
   ingredientID,
   addIngredient,
-  handleCloseAction,
-  handleMoveUpAction,
-  handleMoveDownAction,
-  removeOrderModalDataAction
+  removeIngredient,
+  moveIngredientUp,
+  moveIngredientDown,
+  clearOrderModalData
 } = burgerSlice.actions;
 export default burgerSlice.reducer;

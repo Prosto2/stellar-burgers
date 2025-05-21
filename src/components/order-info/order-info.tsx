@@ -4,11 +4,9 @@ import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient, TOrder } from '@utils-types';
 import { useDispatch, useSelector } from '../../services/store';
 import { useParams } from 'react-router-dom';
-import {
-  GetOrderByNumber,
-  selectOrderData
-} from '../../services/slices/feedSlice/feedSlice';
-import { selectIngredients } from '../../services/slices/burgerSlice/burgerSlice';
+import { selectOrderData } from '../../services/slices/feedSlice/feedSlice';
+import { selectAllIngredients } from '../../services/slices/burgerSlice/burgerSlice';
+import { GetOrderByNumber } from '../../services/slices/feedSlice/actions';
 
 export const OrderInfo: FC = () => {
   const params = useParams();
@@ -20,7 +18,7 @@ export const OrderInfo: FC = () => {
 
   const orderData = useSelector<TOrder | null>(selectOrderData);
 
-  const ingredients = useSelector<TIngredient[]>(selectIngredients);
+  const ingredients = useSelector<TIngredient[]>(selectAllIngredients);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {

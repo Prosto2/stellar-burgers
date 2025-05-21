@@ -9,13 +9,13 @@ import { useDispatch, useSelector } from '../../services/store';
 
 import { useNavigate } from 'react-router-dom';
 import {
-  OrderBurger,
-  removeOrderModalDataAction,
+  clearOrderModalData,
   selectConstructorItems,
   selectOrderModalData,
   selectOrderRequest
 } from '../../services/slices/burgerSlice/burgerSlice';
 import { selectUser } from '../../services/slices/userSlice/userSlice';
+import { OrderBurger } from '../../services/slices/burgerSlice/actions';
 
 export const BurgerConstructor: FC = () => {
   const constructorItems = useSelector<TConstructorItems>(
@@ -41,7 +41,7 @@ export const BurgerConstructor: FC = () => {
     dispatch(OrderBurger(allIngredientIds));
   };
   const closeOrderModal = () => {
-    dispatch(removeOrderModalDataAction());
+    dispatch(clearOrderModalData());
   };
 
   const price = useMemo(
