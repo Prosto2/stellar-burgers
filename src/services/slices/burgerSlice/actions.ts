@@ -4,11 +4,7 @@ import { getIngredientsApi, orderBurgerApi } from '@api';
 
 export const getIngredients = createAsyncThunk<TIngredient[], void>(
   'burger/fetchIngredients',
-  async () => {
-    const response = await getIngredientsApi();
-    console.log('Данные из запроса:', response);
-    return response;
-  }
+  async () => await getIngredientsApi()
 );
 
 export const OrderBurger = createAsyncThunk(

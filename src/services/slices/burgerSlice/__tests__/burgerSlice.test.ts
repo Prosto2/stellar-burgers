@@ -14,7 +14,7 @@ import burgerReducer, {
   selectMains,
   selectSauces,
   selectConstructorItems,
-  selectIngredients,
+  selectAllIngredients,
   selectOrderRequest,
   selectOrderModalData,
   selectIngredientByID
@@ -216,7 +216,7 @@ describe('Тестирование burgerSlice', () => {
     });
 
     it('тестирование селектора selectIngredients', () => {
-      const ingredients = selectIngredients(store.getState());
+      const ingredients = selectAllIngredients(store.getState());
       expect(ingredients).toEqual(ingredients);
     });
 

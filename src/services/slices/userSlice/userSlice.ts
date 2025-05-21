@@ -16,7 +16,7 @@ interface TAuthResponse {
   orders: TOrder[];
 }
 
-const initialState: TAuthResponse = {
+export const initialState: TAuthResponse = {
   isAuthChecked: false,
   errorText: '',
   user: null,

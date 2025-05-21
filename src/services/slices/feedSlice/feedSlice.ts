@@ -10,7 +10,7 @@ interface TIngredientsList {
   errorText: string;
 }
 
-const initialState: TIngredientsList = {
+export const initialState: TIngredientsList = {
   orders: [],
   orderData: null,
   total: 0,

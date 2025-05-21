@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TConstructorItems, TIngredient, TOrder } from '@utils-types';
 import { getIngredients, OrderBurger } from './actions';
+import { RootState } from '../../store';
 
 interface TIngredientsList {
   ingredients: TIngredient[];
@@ -12,7 +13,7 @@ interface TIngredientsList {
   errorText: string;
 }
 
-const initialState: TIngredientsList = {
+export const initialState: TIngredientsList = {
   ingredients: [],
   ingredientID: '',
   isLoading: true,
@@ -24,6 +25,25 @@ const initialState: TIngredientsList = {
   },
   errorText: ''
 };
+
+const selectBurgerSlice = (state: RootState) => state.burger;
+
+const selectIngredients = createSelector(
+  selectBurgerSlice,
+  (burger) => burger.ingredients
+);
+
+export const selectBuns = createSelector(selectIngredients, (ingredients) =>
+  ingredients.filter((i) => i.type === 'bun')
+);
+
+export const selectMains = createSelector(selectIngredients, (ingredients) =>
+  ingredients.filter((i) => i.type === 'main')
+);
+
+export const selectSauces = createSelector(selectIngredients, (ingredients) =>
+  ingredients.filter((i) => i.type === 'sauce')
+);
 
 const burgerSlice = createSlice({
   name: 'burger',
@@ -85,14 +105,8 @@ const burgerSlice = createSlice({
   },
   selectors: {
     selectIsLoading: (sliceState) => sliceState.isLoading,
-    selectBuns: (sliceState) =>
-      sliceState.ingredients.filter((i) => i.type === 'bun'),
-    selectMains: (sliceState) =>
-      sliceState.ingredients.filter((i) => i.type === 'main'),
-    selectSauces: (sliceState) =>
-      sliceState.ingredients.filter((i) => i.type === 'sauce'),
     selectConstructorItems: (sliceState) => sliceState.constructorItems,
-    selectIngredients: (sliceState) => sliceState.ingredients,
+    selectAllIngredients: (sliceState) => sliceState.ingredients,
     selectOrderRequest: (sliceState) => sliceState.orderRequest,
     selectOrderModalData: (sliceState) => sliceState.orderModalData,
     selectIngredientByID: (sliceState) =>
@@ -133,11 +147,8 @@ const burgerSlice = createSlice({
 
 export const {
   selectIsLoading,
-  selectBuns,
-  selectMains,
-  selectSauces,
   selectConstructorItems,
-  selectIngredients,
+  selectAllIngredients,
   selectOrderRequest,
   selectOrderModalData,
   selectIngredientByID
