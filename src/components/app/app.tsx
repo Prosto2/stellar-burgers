@@ -18,11 +18,9 @@ import { ProtectedRoute } from '../protected-route';
 import { useDispatch, useSelector } from '../../services/store';
 import { useEffect } from 'react';
 import { Preloader } from '@ui';
-import { getIngredients } from '../../services/slices/burgerSlice/burgerSlice';
-import {
-  getUser,
-  isAuthCheckedSelector
-} from '../../services/slices/userSlice/userSlice';
+import { isAuthCheckedSelector } from '../../services/slices/userSlice/userSlice';
+import { getUser } from '../../services/slices/userSlice/actions';
+import { getIngredients } from '../../services/slices/burgerSlice/actions';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -36,7 +34,6 @@ const App = () => {
   const location = useLocation();
   const backgroundLocation = location.state?.background;
   const isAuthChecked = useSelector(isAuthCheckedSelector);
-  console.log(isAuthChecked);
 
   return (
     <div className={styles.app}>

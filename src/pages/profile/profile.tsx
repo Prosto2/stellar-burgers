@@ -5,9 +5,9 @@ import { TUser } from '@utils-types';
 import {
   isAuthCheckedSelector,
   selectError,
-  selectUser,
-  UpdateUser
+  selectUser
 } from '../../services/slices/userSlice/userSlice';
+import { UpdateUser } from '../../services/slices/userSlice/actions';
 
 export const Profile: FC = () => {
   const user = useSelector<TUser | null>(selectUser) ?? { name: '', email: '' };
